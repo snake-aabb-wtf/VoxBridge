@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import io
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 import wave
 from types import SimpleNamespace
@@ -15,7 +17,7 @@ import openai
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from voxbridge import mimo_client
-from voxbridge.config import AUTHORIZED_SAMPLES
+from voxbridge.config import AuthorizedSample
 
 
 def make_wav() -> bytes:
@@ -30,7 +32,24 @@ def make_wav() -> bytes:
 
 class CloneAudioTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.sample = AUTHORIZED_SAMPLES[0]
+        self.sample_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.sample_dir.cleanup)
+
+        sample_bytes = make_wav()
+        self.sample_path = Path(self.sample_dir.name) / "test-sample.wav"
+        self.sample_path.write_bytes(sample_bytes)
+        self.sample = AuthorizedSample(
+            label="test-sample.wav",
+            path=self.sample_path,
+            sha256=hashlib.sha256(sample_bytes).hexdigest(),
+        )
+        self.authorized_samples_patch = patch.object(
+            mimo_client,
+            "AUTHORIZED_SAMPLES",
+            (self.sample,),
+        )
+        self.authorized_samples_patch.start()
+        self.addCleanup(self.authorized_samples_patch.stop)
 
     def test_clone_audio_sends_documented_voiceclone_request_and_decodes_wav(self) -> None:
         expected_wav = make_wav()
