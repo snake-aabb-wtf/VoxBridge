@@ -1,0 +1,9 @@
+/key.secret
+/Generated/
+/SourceSamples/
+/settings.json
+/settings.json.tmp
+/.venv/
+/.superpowers/
+__pycache__/
+*.py[cod]
