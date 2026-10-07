@@ -11,6 +11,46 @@ TTS 服务固定为 `mimo-v2.5-tts-voiceclone`，不支持其他服务或预置�
 
 窗口较矮时，可在主内容区使用鼠标滚轮上下滚动；底部状态区保持可见。
 
+## 快速开始（Windows 10/11）
+
+### 1. 注册 MiMo API 并创建 API Key
+
+1. 打开 [Xiaomi MiMo API 开放平台](https://platform.xiaomimimo.com/)，使用小米账号登录。没有小米账号时，可以从控制台注册，或先到 [id.mi.com](https://id.mi.com/) 注册。
+2. 登录后进入控制台的 **API Keys** 页面，创建一个**按量付费 API Key** 并复制保存。VoxBridge 使用 `https://api.xiaomimimo.com/v1`，通常使用 `sk-` 开头的按量付费密钥。Token Plan 密钥需要专属 Base URL，本应用目前不使用该套餐端点。
+3. 本应用固定调用 `mimo-v2.5-tts-voiceclone`。如果请求提示无权限，请在 MiMo 控制台确认账号状态、模型权限和可用额度。API 用量和价格可能变化，使用前请查看 [MiMo 官方定价](https://mimo.mi.com/docs/price/pay-as-you-go)。
+
+官方操作说明：[首次调用 API](https://mimo.mi.com/docs/zh-CN/quick-start/summary/first-api-call) · [API Key 获取与接入](https://mimo.mi.com/docs/zh-CN/quick-start/faq/api-integration)
+
+### 2. 下载项目并填写密钥
+
+可以用 Git 克隆仓库，也可以下载并解压 GitHub 提供的源码 ZIP。若使用 Git，在 PowerShell 中运行：
+
+```powershell
+git clone https://github.com/snake-aabb-wtf/VoxBridge.git
+cd VoxBridge
+```
+
+在项目根目录复制密钥模板并编辑副本：
+
+```powershell
+Copy-Item .\key.secret.example .\key.secret
+notepad .\key.secret
+```
+
+把 `PASTE_YOUR_MIMO_API_KEY_HERE` 替换成刚创建的 API Key。文件只放一行原始密钥，不要写 `API_KEY=`，也不要加引号。`.gitignore` 已排除 `key.secret`，请勿把真实密钥提交或分享；模板文件 `key.secret.example` 可以安全保留。
+
+### 3. 安装并启动
+
+需要 Windows 10/11 和 Python 3.12。在项目根目录的 PowerShell 中运行：
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
+```
+
+依赖安装完成后，也可以双击 `start.bat` 启动。打开界面后，选择一个已授权样本，填写朗读文案和情绪/语气，按 `Ctrl+Alt+6` 生成；选择虚拟麦克风发送端后，按 `Ctrl+Alt+7` 将最近生成的音频送入该通道。首次生成会把所选样本、文案和情绪/语气发送给 MiMo API，并消耗账户额度。
+
 ## 目录结构
 
 ```text
@@ -23,34 +63,15 @@ VoxBridge/
 ├─ Generated/           克隆生成的 WAV（首次成功生成后创建）
 ├─ main.py              应用入口
 ├─ requirements.txt     Python 依赖清单
+├─ key.secret.example   MiMo API 密钥模板
 ├─ UNLICENSE            仅适用于代码的 Unlicense 声明
 ├─ settings.json        本地设备偏好（选择设备后创建）
-└─ key.secret          本地 MiMo API 密钥
+└─ key.secret           本地 MiMo API 密钥（由 .gitignore 排除）
 ```
 
 ## 许可证
 
 本项目代码按 The Unlicense 发布，正文见根目录 [`UNLICENSE`](UNLICENSE)。该声明仅适用于代码，不适用于或重新授权 `SourceSamples/DaiYuqiang.wav` 与 `SourceSamples/TiMi.wav` 两段声音，也不扩大这两段声音原有的授权范围。
-
-## 安装和启动
-
-需要 Windows 10/11 与 Python 3.12。PowerShell 中运行：
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python main.py
-```
-
-如果执行策略阻止虚拟环境激活，可以直接用虚拟环境中的 Python 启动：
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe main.py
-```
-
-依赖安装完成后，也可以双击项目根目录的 `start.bat` 启动。
 
 ## 测试
 
