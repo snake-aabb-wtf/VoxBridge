@@ -23,9 +23,14 @@ VoxBridge/
 ├─ Generated/           克隆生成的 WAV（首次成功生成后创建）
 ├─ main.py              应用入口
 ├─ requirements.txt     Python 依赖清单
+├─ UNLICENSE            仅适用于代码的 Unlicense 声明
 ├─ settings.json        本地设备偏好（选择设备后创建）
 └─ key.secret          本地 MiMo API 密钥
 ```
+
+## 许可证
+
+本项目代码按 The Unlicense 发布，正文见根目录 [`UNLICENSE`](UNLICENSE)。该声明仅适用于代码，不适用于或重新授权 `SourceSamples/DaiYuqiang.wav` 与 `SourceSamples/TiMi.wav` 两段声音，也不扩大这两段声音原有的授权范围。
 
 ## 安装和启动
 
