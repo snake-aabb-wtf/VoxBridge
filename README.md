@@ -68,6 +68,17 @@ $env:VOXBRIDGE_RUN_LIVE_MIMO = "1"
 Remove-Item Env:VOXBRIDGE_RUN_LIVE_MIMO
 ```
 
+## CI 与发布
+
+推送到 `master`、向 `master` 提交 Pull Request，或手动运行 CI 时，GitHub Actions 会在 Windows + Python 3.12 环境安装依赖并运行离线测试。CI 不设置 `VOXBRIDGE_RUN_LIVE_MIMO`，不会调用 MiMo 或消耗额度。
+
+推送 `v*` 格式的标签会先运行同一套测试；测试通过后，自动创建带生成说明的 GitHub Release。GitHub 会为源码提供 ZIP 和 tar.gz 下载包；当前工作流不构建独立 EXE。首次发布版本为 `v0.1.0`。后续版本可按此方式发布：
+
+```powershell
+git tag v0.1.1
+git push origin v0.1.1
+```
+
 ## 虚拟麦克风输入通道
 
 VoxBridge 只通过 Windows WASAPI 枚举设备，并只显示识别到的虚拟麦克风注入端；MME 和 DirectSound 下重复出现的条目不会显示，WASAPI 不可用时也不会改用其他接口。应用不会把语音送到普通扬声器。虚拟驱动会把写入端接到对应的麦克风录音端：VB-CABLE 通常是 `CABLE Input` → `CABLE Output`；Steam Remote Play 可使用 `Speakers (Steam Streaming Microphone)` → `Microphone (Steam Streaming Microphone)`。在需要接收语音的目标程序中，把麦克风设置为对应的录音端。名称不同的独立端点（例如不同通道数的 CABLE 端点）仍会分别显示。
